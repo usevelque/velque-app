@@ -1,0 +1,19 @@
+{
+  "name": "velque-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Web app for Velque, the order book for tokenized stocks on Solana",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@solana/web3.js": "^1.98.4",
+    "buffer": "^6.0.3",
+    "velque-sdk": "github:usevelque/velque-sdk"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
