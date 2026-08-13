@@ -25,6 +25,31 @@
 </div></header>
 
 <main class="wrap">
+ <div class="col-l">
+  <section class="card window" aria-live="polite">
+    <div class="sess" id="sess">
+      <span data-s="day">Day book</span><span data-s="dark">Night auctions</span><span data-s="cross">Opening cross</span>
+    </div>
+    <div class="row between">
+      <div>
+        <div class="k" id="s-kicker">SESSION</div>
+        <div class="big" id="s-title">…</div>
+      </div>
+      <div class="timer">
+        <div class="k" id="s-timer-k">CLEARS IN</div>
+        <div class="big mono" id="w-timer">--:--</div>
+      </div>
+    </div>
+    <div class="bar"><span id="w-bar"></span></div>
+    <div class="stats">
+      <div><div class="k">MARKET</div><div class="v" id="w-pair">tNVDAx / tUSDC</div></div>
+      <div><div class="k">REFERENCE</div><div class="v" id="w-ref">…</div><div class="hint" id="w-ref-src"></div></div>
+      <div><div class="k">LAST PRICE</div><div class="v" id="w-last">…</div></div>
+      <div><div class="k" id="s4-k">ORDERS IN WINDOW</div><div class="v" id="s4-v">0</div><div class="hint" id="s4-h"></div></div>
+    </div>
+    <p class="note" id="w-state"></p>
+  </section>
+
 </main>
 
 <footer><div class="foot-in"><span>© <span id="y"></span> Velque</span><nav><a href="/docs">Docs</a><a href="/docs#risk">Risk</a><a href="https://x.com/usevelque" target="_blank" rel="noopener">X</a></nav></div></footer>
