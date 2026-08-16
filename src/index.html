@@ -56,6 +56,19 @@
     <div class="empty" id="book-empty"></div>
   </section>
 
+  <section class="card mine">
+    <div class="k">YOUR ORDERS AND FILLS</div>
+    <div class="scroll"><table><thead><tr><th>WHERE</th><th>SIDE</th><th>PRICE</th><th>STATE</th><th>TO CLAIM</th><th></th></tr></thead><tbody id="mine"></tbody></table></div>
+    <div class="empty" id="mine-empty">Nothing open and nothing to claim.</div>
+  </section>
+
+  <section class="card log">
+    <div class="row between"><div class="k">AUCTION LOG</div><div class="hint">every result can be recomputed from its orders</div></div>
+    <div class="scroll"><table><thead><tr><th>WINDOW</th><th>CLEARED AT</th><th>PRICE</th><th>VOLUME</th><th>ORDERS</th><th>CHECK</th></tr></thead><tbody id="log"></tbody></table></div>
+    <div class="empty" id="log-empty">No cleared auctions yet.</div>
+  </section>
+ </div>
+ <div class="col-r">
 </main>
 
 <footer><div class="foot-in"><span>© <span id="y"></span> Velque</span><nav><a href="/docs">Docs</a><a href="/docs#risk">Risk</a><a href="https://x.com/usevelque" target="_blank" rel="noopener">X</a></nav></div></footer>
