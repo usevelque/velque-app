@@ -69,6 +69,26 @@
   </section>
  </div>
  <div class="col-r">
+  <section class="card ticket">
+    <div class="k" id="t-k">NEW ORDER</div>
+    <div class="seg" role="tablist">
+      <button class="on" data-side="0" id="t-buy">Buy</button>
+      <button data-side="1" id="t-sell">Sell</button>
+    </div>
+    <label>Limit price, tUSDC<input id="t-price" inputmode="decimal" placeholder="230.50"></label>
+    <label id="t-qty-l">Quantity, tNVDAx<input id="t-qty" inputmode="decimal" placeholder="1"></label>
+    <div class="seg small" id="t-tif">
+      <button class="on" data-tif="0" id="t-one">This window</button>
+      <button data-tif="1" id="t-gtc">Until cancelled</button>
+    </div>
+    <div class="est" id="t-est">Locks 0 tUSDC in escrow until the auction clears.</div>
+    <button class="btn wide" id="t-place" disabled>Connect a wallet to trade</button>
+    <div class="bal">
+      <span id="b-base">tNVDAx –</span><span id="b-quote">tUSDC –</span><span id="b-sol">SOL –</span>
+    </div>
+    <button class="link" id="faucet" hidden>Get test tokens</button>
+    <div class="msg" id="msg" role="status"></div>
+  </section>
 </main>
 
 <footer><div class="foot-in"><span>© <span id="y"></span> Velque</span><nav><a href="/docs">Docs</a><a href="/docs#risk">Risk</a><a href="https://x.com/usevelque" target="_blank" rel="noopener">X</a></nav></div></footer>
