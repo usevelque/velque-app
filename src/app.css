@@ -15,3 +15,17 @@ html{background:#f9cbc9;background-image:
 body{margin:0;font-family:var(--sans);color:var(--ink-2);-webkit-font-smoothing:antialiased}
 a{color:var(--ink)}
 button{font:inherit;cursor:pointer}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
+.brand img{height:26px;display:block}
+.pill-test{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;padding:4px 10px;border-radius:999px;background:#d9f6ee;color:#1f7d69;text-transform:uppercase}
+.mkts{display:flex;gap:4px;background:var(--cream);border-radius:999px;padding:3px}
+.mkts a{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);text-decoration:none}
+.mkts a.on{background:#fff;color:var(--ink);box-shadow:0 3px 10px rgba(150,60,100,.14)}
+.top nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+.top nav a{text-decoration:none;color:var(--ink-2)}
+.btn{border:0;border-radius:999px;background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:10px 18px;box-shadow:0 8px 22px rgba(60,20,40,.22)}
+.btn:hover{background:#3f1f35}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.wide{width:100%;padding:13px}
+.link{border:0;background:none;color:var(--ink);text-decoration:underline;text-underline-offset:3px;padding:6px 0;font-weight:600}
+
