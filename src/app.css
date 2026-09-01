@@ -47,3 +47,16 @@ button{font:inherit;cursor:pointer}
 .note{margin:16px 0 0;font-size:14px;color:var(--ink-2)}
 .note.hot{color:#a3345f;font-weight:600}
 
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--cream);border-radius:14px;padding:4px;margin:14px 0}
+.seg button{border:0;background:none;border-radius:11px;padding:10px;font-weight:600;color:var(--ink-2)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 4px 12px rgba(150,60,100,.14)}
+#t-sell.on{color:#a3345f}#t-buy.on{color:#1f7d69}
+.seg.small button{padding:8px;font-size:13px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 0}
+input{display:block;width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:600 17px var(--sans);color:var(--ink);background:#fffafb}
+input:focus{outline:2px solid var(--pink);outline-offset:1px}
+.est{font-size:13px;color:var(--ink-2);background:var(--cream);border-radius:12px;padding:10px 12px;margin:12px 0}
+.bal{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:12px;font-family:var(--mono)}
+.msg{font-size:13px;margin-top:8px;min-height:18px;overflow-wrap:anywhere}
+.msg.err{color:#b3264f}.msg.ok{color:#1f7d69}
+
