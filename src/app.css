@@ -60,3 +60,14 @@ input:focus{outline:2px solid var(--pink);outline-offset:1px}
 .msg{font-size:13px;margin-top:8px;min-height:18px;overflow-wrap:anywhere}
 .msg.err{color:#b3264f}.msg.ok{color:#1f7d69}
 
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);font-weight:500;padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:10px 8px;border-bottom:1px solid var(--line);color:var(--ink);white-space:nowrap}
+tr.me td{background:#fff6f8}
+.side-buy{color:#1f7d69;font-weight:700}.side-sell{color:#a3345f;font-weight:700}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:2px 7px;border-radius:99px;background:var(--cream);color:var(--ink-2)}
+.ok-badge{color:#1f7d69;font-weight:700}.bad-badge{color:#b3264f;font-weight:700}
+td button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--ink)}
+td button:hover{border-color:var(--ink)}
+.empty{font-size:14px;color:var(--muted);padding:14px 0 4px}
+
