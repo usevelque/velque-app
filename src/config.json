@@ -1,0 +1,30 @@
+{
+  "cluster": "devnet",
+  "rpc": "https://api.devnet.solana.com",
+  "program": "MXG3VzXQucitJ4MSWWd1ddEat5FRS8KFF5j1uZRW7jz",
+  "market": "D7eareS94eDwofGZQHJK3egWz21hFbKAoYsh6CHBKSxU",
+  "baseMint": "98iqgCLWRHybNpiH35Axk1Tdhx5FFj4DGBJYvNRG44Nv",
+  "quoteMint": "EpRLDXkPDUMJ7xjkaL8MC1mWNGGPJBVY82bEsLcovjb",
+  "baseProg": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "quoteProg": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  "baseSymbol": "tNVDAx",
+  "quoteSymbol": "tUSDC",
+  "baseDecimals": 8,
+  "quoteDecimals": 6,
+  "tick": "10000",
+  "lot": "100000",
+  "windowSecs": 120,
+  "maxAge": 600,
+  "bandBps": 500,
+  "minNotional": "10000000",
+  "oracle": "6EiNkxqqwTdj8RxCYtDGSvnRZQzx8jZWXe6bz7tEyNf4",
+  "referenceSource": {
+    "name": "Nasdaq last trade",
+    "symbol": "NVDA",
+    "sources": [
+      "api.nasdaq.com",
+      "Yahoo Finance"
+    ],
+    "checkMint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh"
+  }
+}
