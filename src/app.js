@@ -29,3 +29,29 @@ const BU = 10n ** BigInt(BDEC); // base: xStocks use 8 decimals
 const MIN_NOTIONAL = BigInt(M.minNotional ?? 0);
 const LOG_DEPTH = 8;
 
+const $ = (id) => document.getElementById(id);
+const baseAta = (w) => V.ata(w, BASE, BASE_PROG);
+const quoteAta = (w) => V.ata(w, QUOTE, QUOTE_PROG);
+const usd = (v) => '$' + (Number(v) / 1e6).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const qtyFmt = (v) => (Number(v) / Number(BU)).toLocaleString('en-US', { maximumFractionDigits: 3 });
+const quoteFmt = (v) => (Number(v) / 1e6).toLocaleString('en-US', { maximumFractionDigits: 2 });
+const short = (k) => k.slice(0, 4) + '…' + k.slice(-4);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const clock = (s) => {
+  s = Math.max(0, Math.floor(s));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const ss = String(s % 60).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${String(m).padStart(2, '0')}:${ss}`;
+};
+const human = (s) => {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return h >= 24 ? `${Math.floor(h / 24)}d ${h % 24}h` : h > 0 ? `${h}h ${m}m` : `${m}m`;
+};
+
+const state = {
+  market: null, book: null, day: null, log: [], wallet: null, provider: null, bal: null,
+  side: 0, tif: 0, clockSkew: 0, cranking: false, nextCrank: 0, verified: {},
+};
+
