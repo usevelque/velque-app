@@ -55,3 +55,28 @@ const state = {
   side: 0, tif: 0, clockSkew: 0, cranking: false, nextCrank: 0, verified: {},
 };
 
+// ---------------------------------------------------------------- wallet
+
+function findProvider() {
+  const w = window;
+  return w.phantom?.solana || w.solflare || w.backpack || (w.solana?.connect ? w.solana : null);
+}
+
+async function connect() {
+  const p = findProvider();
+  if (!p) {
+    say('No Solana wallet found. Install Phantom, Solflare or Backpack.', 'err');
+    return;
+  }
+  try {
+    const r = await p.connect();
+    state.provider = p;
+    state.wallet = new PublicKey((r?.publicKey || p.publicKey).toString());
+    $('connect').textContent = short(state.wallet.toBase58());
+    say('');
+    await refresh();
+  } catch (e) {
+    say(e.message || 'Wallet connection was rejected.', 'err');
+  }
+}
+
