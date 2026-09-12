@@ -80,3 +80,37 @@ async function connect() {
   }
 }
 
+async function sendTx(ixs, label, units = 150_000) {
+  const tx = new Transaction().add(V.computeLimit(units), ...ixs);
+  tx.feePayer = state.wallet;
+  const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash('confirmed');
+  tx.recentBlockhash = blockhash;
+  say(`${label}: confirm in your wallet…`);
+  const signed = await state.provider.signTransaction(tx);
+  const sig = await conn.sendRawTransaction(signed.serialize());
+  say(`${label}: sent, waiting for confirmation…`);
+  await conn.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
+  say(`${label}: done.`, 'ok');
+  return sig;
+}
+
+function friendly(e) {
+  const m = String(e?.message || e);
+  const codes = {
+    '0x3': 'Price must be a multiple of $0.01 and quantity a multiple of 0.001.',
+    '0x4': 'This window just closed. Wait a moment for the next one.',
+    '0x6': 'This book is full (64 orders). Try again in a moment.',
+    '0xc': 'Nasdaq is open, so the market is on the day book now. Refreshing.',
+    '0xd': 'The day session just ended. Orders go to the night auction now.',
+    '0xe': 'That price is outside the band around the reference.',
+    '0x11': `Minimum order is ${usd(MIN_NOTIONAL)}.`,
+    '0x1': 'The window moved on. Refresh and try again.',
+  };
+  const code = m.match(/custom program error: (0x[0-9a-f]+)/i)?.[1]?.toLowerCase();
+  if (code && codes[code]) return codes[code];
+  if (m.includes('insufficient') || m.includes('0x1771') || m.includes('Attempt to debit')) return 'Not enough balance. Get test tokens first.';
+  if (m.toLowerCase().includes('reject')) return 'Rejected in the wallet.';
+  if (m.includes('blockhash') || m.includes('network')) return 'Your wallet may be on another network. Switch it to the Solana test network.';
+  return m.slice(0, 200);
+}
+
