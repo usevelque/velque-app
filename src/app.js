@@ -165,3 +165,20 @@ async function loadBalances() {
   state.bal = { base: b, quote: q, sol };
 }
 
+// ---------------------------------------------------------------- session
+
+function view() {
+  const mk = state.market;
+  const now = chainNow();
+  const sess = V.session(mk, now);
+  const open = V.nasdaqOpen(now);
+  const windowLive = state.book ? state.book.orders.filter((o) => o.status === 'live') : [];
+  const r = mk.reference;
+  const band = { lo: (r * (10_000n - mk.bandBps)) / 10_000n, hi: (r * (10_000n + mk.bandBps)) / 10_000n };
+  return { now, sess, open, windowLive, cross: sess === 'day' && windowLive.length > 0, band };
+}
+
+const mine = (o) => state.wallet && o.owner.equals(state.wallet);
+// orders from the test market's market maker are labelled openly
+const who = (o) => (mine(o) ? 'you' : cfg.marketMaker && o.owner.toBase58() === cfg.marketMaker ? 'Velque maker' : short(o.owner.toBase58()));
+
