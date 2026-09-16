@@ -114,3 +114,28 @@ function friendly(e) {
   return m.slice(0, 200);
 }
 
+// ---------------------------------------------------------------- data
+
+async function chainClock() {
+  try {
+    const slot = await conn.getSlot();
+    const t = await conn.getBlockTime(slot);
+    if (t) state.clockSkew = t - Math.floor(Date.now() / 1000);
+  } catch { /* the chain clock is not critical */ }
+}
+const chainNow = () => Math.floor(Date.now() / 1000) + state.clockSkew;
+
+async function loadLog(mk) {
+  const ids = [];
+  for (let i = 1n; i <= BigInt(LOG_DEPTH) && mk.auctionId - i >= 0n; i++) ids.push(mk.auctionId - i);
+  const keys = ids.map((id) => V.bookPda(MARKET, id));
+  const infos = await conn.getMultipleAccountsInfo(keys);
+  const books = [];
+  for (let i = 0; i < ids.length; i++) {
+    if (!infos[i]) continue;
+    const b = await V.readBook({ getAccountInfo: async () => infos[i] }, keys[i]);
+    if (b?.cleared) books.push(b);
+  }
+  return books;
+}
+
