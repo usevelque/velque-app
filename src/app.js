@@ -139,3 +139,29 @@ async function loadLog(mk) {
   return books;
 }
 
+async function refresh() {
+  try {
+    const mk = await V.readMarket(conn, MARKET);
+    state.market = mk;
+    // ScaledUiAmount multiplier: how many shares one token holds
+    state.multiplier = V.scaledMultiplier((await conn.getAccountInfo(BASE))?.data, chainNow());
+    [state.book, state.day, state.log] = await Promise.all([
+      V.readBook(conn, V.bookPda(MARKET, mk.auctionId)), V.readDay(conn, MARKET), loadLog(mk),
+    ]);
+    if (state.wallet) await loadBalances();
+    render();
+  } catch (e) {
+    say('Could not reach the network. Retrying…', 'err');
+  }
+}
+
+async function loadBalances() {
+  const w = state.wallet;
+  const [b, q, sol] = await Promise.all([
+    conn.getTokenAccountBalance(baseAta(w)).then((r) => BigInt(r.value.amount)).catch(() => null),
+    conn.getTokenAccountBalance(quoteAta(w)).then((r) => BigInt(r.value.amount)).catch(() => null),
+    conn.getBalance(w).catch(() => 0),
+  ]);
+  state.bal = { base: b, quote: q, sol };
+}
+
