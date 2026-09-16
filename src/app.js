@@ -182,3 +182,43 @@ const mine = (o) => state.wallet && o.owner.equals(state.wallet);
 // orders from the test market's market maker are labelled openly
 const who = (o) => (mine(o) ? 'you' : cfg.marketMaker && o.owner.toBase58() === cfg.marketMaker ? 'Velque maker' : short(o.owner.toBase58()));
 
+// ---------------------------------------------------------------- rendering
+
+function render() {
+  const mk = state.market;
+  if (!mk) return;
+  const v = view();
+  const shown = v.cross ? 'cross' : v.sess;
+  for (const s of $('sess').children) s.classList.toggle('on', s.dataset.s === shown);
+
+  $('w-ref').textContent = usd(mk.reference);
+  const mult = state.multiplier || 1;
+  const share = usd(BigInt(Math.round(Number(mk.reference) / mult)));
+  $('w-ref-src').textContent = `Nasdaq ${M.symbol} ${share}${mult !== 1 ? ` × ${mult.toFixed(4)}` : ''}${v.sess === 'day' && v.open ? '' : ', last'}`;
+  $('w-ref-src').title = `Signed on-chain by the oracle key ${cfg.oracle || ''}. Sources: ${(cfg.referenceSource.sources || []).join(', ')}. The token holds ${mult} shares after dividends.`;
+  $('w-last').textContent = mk.lastPrice > 0n ? usd(mk.lastPrice) : '–';
+  if (v.sess === 'day') {
+    $('s4-k').textContent = 'BAND';
+    $('s4-v').textContent = `${usd(v.band.lo)} – ${usd(v.band.hi)}`;
+    $('s4-h').textContent = `±${Number(mk.bandBps) / 100}% of reference`;
+  } else {
+    $('s4-k').textContent = 'ORDERS IN WINDOW';
+    $('s4-v').textContent = v.windowLive.length;
+    $('s4-h').textContent = '';
+  }
+
+  renderBook(v);
+  renderMine();
+  renderLog();
+
+  if (state.wallet && state.bal) {
+    const { base, quote, sol } = state.bal;
+    $('b-base').textContent = `${SYM} ${base === null ? '0' : qtyFmt(base)}`;
+    $('b-quote').textContent = `tUSDC ${quote === null ? '0' : quoteFmt(quote)}`;
+    $('b-sol').textContent = `SOL ${(sol / 1e9).toFixed(3)}`;
+    $('faucet').hidden = quote !== null;
+  }
+  updateTicket();
+  tick();
+}
+
