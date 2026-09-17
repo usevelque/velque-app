@@ -222,3 +222,38 @@ function render() {
   tick();
 }
 
+function renderBook(v) {
+  if (v.sess === 'day') {
+    const { bids, asks } = state.day;
+    $('book-k').textContent = 'DAY BOOK';
+    $('book-h').textContent = 'price then time, fills at the resting price';
+    $('book-head').innerHTML = '<tr><th>PRICE</th><th>QTY</th><th>OWNER</th><th></th></tr>';
+    const max = [...bids, ...asks].reduce((m, s) => (s.qty > m ? s.qty : m), 1n);
+    const row = (s, cls) => `<tr class="${cls}${mine(s) ? ' me' : ''}"><td class="side-${s.side}">${usd(s.price)}</td>
+      <td class="depth"><i style="width:${Math.max(4, Number((s.qty * 100n) / max))}%"></i>${qtyFmt(s.qty)}</td>
+      <td>${who(s)}</td>
+      <td>${mine(s) ? `<button data-dcancel="${s.index}">Cancel</button>` : ''}</td></tr>`;
+    const spread = asks.length && bids.length ? `spread ${usd(asks[0].price - bids[0].price)}` : asks.length ? 'no bids yet' : bids.length ? 'no asks yet' : '';
+    const rows = [...asks].reverse().map((s) => row(s, 'ask')).join('')
+      + (asks.length || bids.length ? `<tr class="spread"><td colspan="4">${spread}</td></tr>` : '')
+      + bids.map((s) => row(s, 'bid')).join('');
+    $('book').innerHTML = rows;
+    $('book-empty').textContent = 'The day book is empty. The first limit order inside the band opens it.';
+    $('book-empty').hidden = bids.length + asks.length > 0;
+    $('book').closest('table').hidden = bids.length + asks.length === 0;
+    return;
+  }
+  $('book-k').textContent = 'ORDERS IN THIS WINDOW';
+  $('book-h').textContent = 'prices do not match until the window closes';
+  $('book-head').innerHTML = '<tr><th>SIDE</th><th>PRICE</th><th>QTY</th><th>TIF</th><th>OWNER</th><th></th></tr>';
+  const live = v.windowLive;
+  const rows = [...live.filter((o) => o.side === 'sell').sort((a, b) => (a.price < b.price ? 1 : -1)),
+    ...live.filter((o) => o.side === 'buy').sort((a, b) => (a.price < b.price ? 1 : -1))];
+  $('book').innerHTML = rows.map((o) => `<tr class="${mine(o) ? 'me' : ''}"><td class="side-${o.side}">${o.side.toUpperCase()}</td><td>${usd(o.price)}</td><td>${qtyFmt(o.qty)}</td>
+    <td><span class="tag">${o.tif === 'gtc' ? 'GTC' : 'ONE'}</span></td><td>${who(o)}</td>
+    <td>${mine(o) && !v.cross ? `<button data-cancel="${o.index}" data-side="${o.side}">Cancel</button>` : ''}</td></tr>`).join('');
+  $('book-empty').textContent = 'No orders yet. The first order in a window opens its book.';
+  $('book-empty').hidden = rows.length > 0;
+  $('book').closest('table').hidden = rows.length === 0;
+}
+
