@@ -257,3 +257,40 @@ function renderBook(v) {
   $('book').closest('table').hidden = rows.length === 0;
 }
 
+function renderMine() {
+  const rows = [];
+  if (state.wallet) {
+    // current auction window: open orders, cancellable until the window ends
+    const cross = V.session(state.market, chainNow()) === 'day';
+    for (const o of state.book ? state.book.orders : []) {
+      if (!mine(o) || o.status !== 'live') continue;
+      rows.push(`<tr><td>#${state.book.auctionId} <span class="tag">${o.tif === 'gtc' ? 'GTC' : 'ONE'}</span></td><td class="side-${o.side}">${o.side.toUpperCase()}</td><td>${usd(o.price)}</td>
+        <td>${qtyFmt(o.qty)} waiting for the window</td><td>–</td>
+        <td>${cross ? '' : `<button data-cancel="${o.index}" data-side="${o.side}">Cancel</button>`}</td></tr>`);
+    }
+    // day book: live orders and what they have earned
+    for (const s of state.day.slots) {
+      if (!mine(s)) continue;
+      const owed = s.owed > 0n ? (s.side === 'sell' ? `${usd(s.owed)} tUSDC` : `${qtyFmt(s.owed)} ${SYM}`) : '–';
+      const st = s.status === 'moved' ? 'moved to the night auction' : s.qty > 0n ? `${qtyFmt(s.qty)} resting` : 'filled';
+      const canClaim = s.owed > 0n || s.status === 'moved' || s.qty === 0n;
+      rows.push(`<tr><td>Day book</td><td class="side-${s.side}">${s.side.toUpperCase()}</td><td>${usd(s.price)}</td><td>${st}</td><td>${owed}</td>
+        <td class="acts">${canClaim ? `<button data-dclaim="${s.index}">Claim</button>` : ''}${s.status === 'live' && s.qty > 0n ? `<button data-dcancel="${s.index}">Cancel</button>` : ''}</td></tr>`);
+    }
+    // cleared windows: fills and change
+    for (const b of state.log) {
+      for (const o of b.orders) {
+        if (o.status !== 'live' || !mine(o) || (o.filled === 0n && o.escrow === 0n)) continue;
+        const at = b.volume > 0n ? usd(b.clearPrice) : 'no cross';
+        const get = o.side === 'buy' ? `${qtyFmt(o.filled)} ${SYM} + change` : `${usd((o.filled * b.clearPrice) / BU)} tUSDC`;
+        rows.push(`<tr><td>#${b.auctionId}${b.clearedAt < b.windowEnd ? ' <span class="tag">CROSS</span>' : ''}</td><td class="side-${o.side}">${o.side.toUpperCase()}</td><td>${usd(o.price)}</td>
+          <td>${qtyFmt(o.filled)} / ${qtyFmt(o.qty)} at ${at}</td><td>${o.filled > 0n ? get : 'refund'}</td>
+          <td><button data-claim="${o.index}" data-book="${b.address.toBase58()}">Claim</button></td></tr>`);
+      }
+    }
+  }
+  $('mine').innerHTML = rows.join('');
+  $('mine-empty').hidden = rows.length > 0;
+  $('mine').closest('table').hidden = rows.length === 0;
+}
+
