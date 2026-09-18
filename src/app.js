@@ -294,3 +294,11 @@ function renderMine() {
   $('mine').closest('table').hidden = rows.length === 0;
 }
 
+function renderLog() {
+  $('log').innerHTML = state.log.map((b) => `<tr><td>#${b.auctionId}${b.clearedAt < b.windowEnd ? ' <span class="tag">CROSS</span>' : ''}</td><td>${new Date(b.clearedAt * 1000).toLocaleTimeString()}</td>
+    <td>${b.volume > 0n ? usd(b.clearPrice) : 'no cross'}</td><td>${qtyFmt(b.volume)}</td><td>${b.orders.filter((o) => o.status !== 'cancelled').length}</td>
+    <td>${state.verified[b.address.toBase58()] ?? `<button data-verify="${b.address.toBase58()}">Verify</button>`}</td></tr>`).join('');
+  $('log-empty').hidden = state.log.length > 0;
+  $('log').closest('table').hidden = state.log.length === 0;
+}
+
