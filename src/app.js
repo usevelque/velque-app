@@ -302,3 +302,57 @@ function renderLog() {
   $('log').closest('table').hidden = state.log.length === 0;
 }
 
+function tick() {
+  const mk = state.market;
+  if (!mk) return;
+  const v = view();
+  const st = $('w-state');
+  st.classList.remove('hot');
+  let left;
+  let total;
+  if (v.sess === 'day' && v.open) {
+    const change = V.nextNasdaqChange(v.now);
+    left = change - v.now;
+    total = 6.5 * 3600;
+    $('s-kicker').textContent = 'DAY SESSION';
+    $('s-title').textContent = v.cross ? 'Opening cross' : 'Continuous book';
+    $('s-timer-k').textContent = 'NASDAQ CLOSES IN';
+    st.textContent = v.cross
+      ? 'Nasdaq is open. The night orders clear together at one price now, then the day book takes over.'
+      : 'Nasdaq is open. Orders match the moment they arrive, best price first, inside the band around the reference.';
+    if (v.cross) st.classList.add('hot');
+  } else if (v.sess === 'day') {
+    left = mk.refAt + Number(mk.maxAge) - v.now;
+    total = Number(mk.maxAge);
+    $('s-kicker').textContent = 'DAY SESSION';
+    $('s-title').textContent = 'Closing';
+    $('s-timer-k').textContent = 'AUCTION STARTS IN';
+    st.textContent = 'Nasdaq has closed. When the last reference goes stale, resting orders move into the night auction with their escrow.';
+  } else {
+    left = mk.windowEnd - v.now;
+    total = Number(mk.windowSecs);
+    const change = V.nextNasdaqChange(v.now);
+    $('s-kicker').textContent = 'AUCTION WINDOW';
+    $('s-title').textContent = '#' + mk.auctionId;
+    $('s-timer-k').textContent = 'CLEARS IN';
+    if (v.open) {
+      st.textContent = 'Nasdaq is open. Waking the day book…';
+    } else if (left > 0) {
+      st.textContent = `Nasdaq is closed. Orders collect until the timer ends, then everyone who crosses fills at one price. The opening cross is in ${human(change - v.now)}.`;
+    } else {
+      st.textContent = 'Window closed. Clearing at one price…';
+      st.classList.add('hot');
+    }
+  }
+  renderGuide(v);
+  $('w-timer').textContent = clock(left);
+  $('w-bar').style.width = `${Math.min(100, Math.max(0, (1 - left / total) * 100))}%`;
+
+  // crank: keeps the reference fresh by day, clears windows at night, moves the day book into the auction
+  const dayLive = state.day ? state.day.bids.length + state.day.asks.length : 0;
+  const need = v.open
+    ? v.now - mk.refAt > 240 || v.cross
+    : v.sess === 'dark' && (v.now >= mk.windowEnd || dayLive > 0);
+  if (need) crank();
+}
+
