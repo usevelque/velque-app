@@ -356,3 +356,33 @@ function tick() {
   if (need) crank();
 }
 
+const GUIDE = {
+  day: ['Day book', ['A limit order matches the best resting price the moment it lands.', 'You pay the resting price, never more than your limit.', 'What does not fill rests in the book. Cancel or claim any time.']],
+  closing: ['Day book is closing', ['Nasdaq has closed, the reference is going stale.', 'Resting orders move into the night auction with their escrow.', 'Whatever they earned today stays claimable.']],
+  dark: ['Night auctions', ['Orders collect until the window timer ends.', 'Everyone who crosses fills at one price.', 'Until-cancelled orders carry into the next window.']],
+  cross: ['Opening cross', ['Nasdaq is open again. Night orders clear together now.', 'One price for every fill in the cross.', 'Unfilled until-cancelled orders move into the day book.']],
+};
+
+function renderGuide(v) {
+  const key = v.cross ? 'cross' : v.sess === 'day' ? (v.open ? 'day' : 'closing') : 'dark';
+  if (state.guideKey !== key) {
+    state.guideKey = key;
+    $('g-title').textContent = GUIDE[key][0];
+    $('g-list').innerHTML = GUIDE[key][1].map((x) => `<li>${esc(x)}</li>`).join('');
+  }
+  const change = V.nextNasdaqChange(v.now);
+  $('g-next-k').textContent = v.open ? 'NASDAQ CLOSES IN' : 'NASDAQ OPENS IN';
+  $('g-next').textContent = change ? human(change - v.now) : '';
+}
+
+async function crank() {
+  if (state.cranking || Date.now() < state.nextCrank) return;
+  state.cranking = true;
+  try {
+    await fetch(`/api/crank?m=${M.symbol}`, { cache: 'no-store' });
+  } catch { /* the next tick will retry */ }
+  state.nextCrank = Date.now() + 15_000;
+  state.cranking = false;
+  await refresh();
+}
+
