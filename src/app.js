@@ -386,3 +386,27 @@ async function crank() {
   await refresh();
 }
 
+// ---------------------------------------------------------------- ticket
+
+function parseAmount(s, dec = 6) {
+  const m = String(s).trim().replace(',', '.').match(new RegExp(`^(\\d+)(?:\\.(\\d{0,${dec}}))?$`));
+  if (!m) return null;
+  return BigInt(m[1]) * 10n ** BigInt(dec) + BigInt((m[2] || '').padEnd(dec, '0'));
+}
+
+/** How much the order takes from the day book right away: (quantity, cost). */
+function preview(side, price, qty) {
+  const book = side === 0 ? state.day.asks : state.day.bids;
+  let left = qty;
+  let cost = 0n;
+  for (const s of book) {
+    if (left === 0n) break;
+    if (mine(s)) continue;
+    if (side === 0 ? s.price > price : s.price < price) break;
+    const q = s.qty < left ? s.qty : left;
+    cost += (s.price * q) / BU;
+    left -= q;
+  }
+  return { filled: qty - left, cost, rest: left };
+}
+
