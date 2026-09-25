@@ -410,3 +410,43 @@ function preview(side, price, qty) {
   return { filled: qty - left, cost, rest: left };
 }
 
+function updateTicket() {
+  const mk = state.market;
+  const price = parseAmount($('t-price').value);
+  const qty = parseAmount($('t-qty').value, BDEC);
+  const btn = $('t-place');
+  const buy = state.side === 0;
+  const v = mk ? view() : null;
+  const day = v?.sess === 'day';
+  $('t-tif').hidden = day;
+  $('t-k').textContent = day ? 'NEW ORDER · DAY BOOK' : 'NEW ORDER · AUCTION';
+  let est = day
+    ? 'Matches right away against the book at the resting price; the rest waits in the day book.'
+    : buy ? 'Locks tUSDC in escrow until the auction clears.' : `Locks ${SYM} in escrow until the auction clears.`;
+  let ok = false;
+  if (price && qty && mk) {
+    const bad = price % TICK !== 0n ? 'Price must be in $0.01 steps.' : qty % LOT !== 0n ? 'Quantity must be in 0.001 steps.'
+      : (price * qty) / BU < MIN_NOTIONAL ? `Minimum order is ${usd(MIN_NOTIONAL)}.` : '';
+    if (bad) est = bad;
+    else if (day && (price < v.band.lo || price > v.band.hi)) est = `Outside the band. Day prices stay within ${usd(v.band.lo)} – ${usd(v.band.hi)}.`;
+    else if (day) {
+      const p = preview(state.side, price, qty);
+      const now = p.filled > 0n ? `Fills ${qtyFmt(p.filled)} now for ${usd(p.cost)} (avg ${usd((p.cost * BU) / p.filled)}).` : 'Nothing to match yet.';
+      const rest = p.rest > 0n ? ` ${qtyFmt(p.rest)} rests in the book at ${usd(price)}${buy ? `, locking ${usd((price * p.rest + BU - 1n) / BU)} tUSDC` : ''}.` : '';
+      est = now + rest;
+      ok = true;
+    } else {
+      const lock = buy ? (price * qty + BU - 1n) / BU : qty;
+      est = buy ? `Locks ${usd(lock)} tUSDC. You pay the clearing price, never more than ${usd(price)} per token.`
+        : `Locks ${qtyFmt(lock)} ${SYM}. You sell at the clearing price, never less than ${usd(price)} per token.`;
+      ok = true;
+    }
+  }
+  $('t-est').textContent = est;
+  const openWindow = day || (mk && mk.windowEnd - chainNow() > 2 && !v.open);
+  btn.disabled = !state.wallet || !ok || !openWindow;
+  btn.textContent = !state.wallet ? 'Connect a wallet to trade'
+    : !openWindow ? (v?.open ? 'Day book is opening…' : 'Next window is opening…')
+    : buy ? 'Place buy order' : 'Place sell order';
+}
+
