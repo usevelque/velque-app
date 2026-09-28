@@ -450,3 +450,22 @@ function updateTicket() {
     : buy ? 'Place buy order' : 'Place sell order';
 }
 
+async function place() {
+  const price = parseAmount($('t-price').value);
+  const qty = parseAmount($('t-qty').value, BDEC);
+  const side = state.side;
+  const mk = state.market;
+  try {
+    if (view().sess === 'day') {
+      await sendTx([V.placeDayIx({ owner: state.wallet, mk, side, price, qty, baseAcc: baseAta(state.wallet), quoteAcc: quoteAta(state.wallet) })], 'Order', 300_000);
+    } else {
+      await sendTx([V.placeIx({ owner: state.wallet, mk, side, price, qty, tif: state.tif,
+        src: side === V.SELL ? baseAta(state.wallet) : quoteAta(state.wallet) })], 'Order');
+    }
+    $('t-qty').value = '';
+  } catch (e) {
+    say(friendly(e), 'err');
+  }
+  await refresh();
+}
+
