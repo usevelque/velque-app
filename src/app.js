@@ -27,7 +27,7 @@ const U = 1_000_000n; // quote (USDC)
 const BDEC = M.baseDecimals ?? 6;
 const BU = 10n ** BigInt(BDEC); // base: xStocks use 8 decimals
 const MIN_NOTIONAL = BigInt(M.minNotional ?? 0);
-const LOG_DEPTH = 8;
+const LOG_DEPTH = 12;
 
 const $ = (id) => document.getElementById(id);
 const baseAta = (w) => V.ata(w, BASE, BASE_PROG);
