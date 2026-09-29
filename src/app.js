@@ -469,3 +469,62 @@ async function place() {
   await refresh();
 }
 
+// ---------------------------------------------------------------- actions
+
+document.addEventListener('click', async (ev) => {
+  const t = ev.target.closest('button');
+  if (!t) return;
+  const w = state.wallet;
+  const mk = state.market;
+  if (t.id === 'connect') return connect();
+  if (t.id === 'faucet') {
+    t.disabled = true;
+    say('Sending test tokens…');
+    try {
+      const r = await fetch('/api/faucet', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ wallet: w.toBase58() }) });
+      const j = await r.json();
+      say(j.ok ? `Received ${j.base} each of ${(j.bases || [SYM]).join(', ')} and ${j.quote.toLocaleString('en-US')} tUSDC.` : j.error, j.ok ? 'ok' : 'err');
+    } catch {
+      say('Faucet is busy, try again in a minute.', 'err');
+    }
+    t.disabled = false;
+    return refresh();
+  }
+  if (t.dataset.side !== undefined && t.closest('.ticket') && !t.dataset.cancel) {
+    state.side = Number(t.dataset.side);
+    $('t-buy').classList.toggle('on', state.side === 0);
+    $('t-sell').classList.toggle('on', state.side === 1);
+    return updateTicket();
+  }
+  if (t.dataset.tif !== undefined) {
+    state.tif = Number(t.dataset.tif);
+    $('t-one').classList.toggle('on', state.tif === 0);
+    $('t-gtc').classList.toggle('on', state.tif === 1);
+    return;
+  }
+  if (t.id === 't-place') return place();
+  try {
+    if (t.dataset.cancel !== undefined) {
+      const side = t.dataset.side === 'sell' ? V.SELL : V.BUY;
+      await sendTx([V.cancelIx({ owner: w, mk, index: Number(t.dataset.cancel), side, dest: side === V.SELL ? baseAta(w) : quoteAta(w) })], 'Cancel');
+    } else if (t.dataset.claim !== undefined) {
+      await sendTx([V.claimIx({ owner: w, mk, book: new PublicKey(t.dataset.book), index: Number(t.dataset.claim), baseDest: baseAta(w), quoteDest: quoteAta(w) })], 'Claim');
+    } else if (t.dataset.dcancel !== undefined) {
+      await sendTx([V.cancelDayIx({ owner: w, mk, index: Number(t.dataset.dcancel), baseAcc: baseAta(w), quoteAcc: quoteAta(w) })], 'Cancel');
+    } else if (t.dataset.dclaim !== undefined) {
+      await sendTx([V.claimDayIx({ owner: w, mk, index: Number(t.dataset.dclaim), baseAcc: baseAta(w), quoteAcc: quoteAta(w) })], 'Claim');
+    } else if (t.dataset.verify) {
+      const b = state.log.find((x) => x.address.toBase58() === t.dataset.verify);
+      const r = replay(b, state.market);
+      state.verified[t.dataset.verify] = r.ok ? '<span class="ok-badge">✓ recomputed: same price and fills</span>'
+        : `<span class="bad-badge">✗ recomputed ${esc(usd(r.price))}</span>`;
+      return render();
+    } else {
+      return;
+    }
+  } catch (e) {
+    say(friendly(e), 'err');
+  }
+  return refresh();
+});
+
