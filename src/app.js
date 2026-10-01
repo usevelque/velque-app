@@ -528,3 +528,28 @@ document.addEventListener('click', async (ev) => {
   return refresh();
 });
 
+function say(text, kind = '') {
+  const m = $('msg');
+  m.textContent = text;
+  m.className = 'msg ' + kind;
+}
+
+$('t-price').addEventListener('input', updateTicket);
+$('t-qty').addEventListener('input', updateTicket);
+$('y').textContent = new Date().getFullYear();
+$('mkts').innerHTML = MKTS.map((x) => `<a href="?m=${x.symbol}" class="${x === M ? 'on' : ''}">${esc(x.baseSymbol)}</a>`).join('');
+$('w-pair').textContent = `${SYM} / tUSDC`;
+$('b-base').textContent = `${SYM} –`;
+$('t-qty-l').firstChild.textContent = `Quantity, ${SYM}`;
+document.title = `${SYM} · Velque`;
+
+(async () => {
+  await chainClock();
+  await refresh();
+  if (state.market) $('t-price').placeholder = (Number(state.market.reference) / 1e6).toFixed(2);
+  setInterval(tick, 1000);
+  setInterval(refresh, 6000);
+  setInterval(chainClock, 60000);
+  const p = findProvider();
+  if (p?.isConnected && p.publicKey) connect();
+})();
