@@ -26,5 +26,52 @@
       "Yahoo Finance"
     ],
     "checkMint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh"
-  }
+  },
+  "markets": [
+    {
+      "symbol": "NVDA",
+      "baseSymbol": "tNVDAx",
+      "market": "D7eareS94eDwofGZQHJK3egWz21hFbKAoYsh6CHBKSxU",
+      "baseMint": "98iqgCLWRHybNpiH35Axk1Tdhx5FFj4DGBJYvNRG44Nv",
+      "baseProg": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "baseDecimals": 8,
+      "tick": "10000",
+      "lot": "100000",
+      "windowSecs": 120,
+      "maxAge": 600,
+      "bandBps": 500,
+      "minNotional": "10000000",
+      "checkMint": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh"
+    },
+    {
+      "symbol": "TSLA",
+      "baseSymbol": "tTSLAx",
+      "market": "38TWU27AJKSoZNgPNXgjJj7Ca79CTmMjVwTD8dnHBt1V",
+      "baseMint": "HQHrqJgS8M1kSkHJg3Ad2J7TcpB1QZuobngytvBYTH67",
+      "baseProg": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "baseDecimals": 8,
+      "tick": "10000",
+      "lot": "100000",
+      "windowSecs": 120,
+      "maxAge": 600,
+      "bandBps": 500,
+      "minNotional": "10000000",
+      "checkMint": "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB"
+    },
+    {
+      "symbol": "AAPL",
+      "baseSymbol": "tAAPLx",
+      "market": "69Y5pKhoXk9HxBTYqpQwYWEPtZb9nrD9oDP9XdHe3GWy",
+      "baseMint": "BrE2dpD3Jb4pCcYcev8HRLKiTKyog7YQs6LTquVnjDtz",
+      "baseProg": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "baseDecimals": 8,
+      "tick": "10000",
+      "lot": "100000",
+      "windowSecs": 120,
+      "maxAge": 600,
+      "bandBps": 500,
+      "minNotional": "10000000",
+      "checkMint": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp"
+    }
+  ]
 }
