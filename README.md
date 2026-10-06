@@ -14,3 +14,26 @@ Live at **[usevelque.xyz/app](https://usevelque.xyz/app)**.
 
 Three test stocks are listed: tNVDAx, tTSLAx and tAAPLx. They are Token-2022 mints with 8 decimals and the same dividend multiplier as the real xStocks, so the app handles the real tokens the same way.
 
+## Build
+
+```bash
+npm install
+npm run build     # bundles src/app.js with esbuild into dist/
+```
+
+`dist/` is a static folder: `index.html`, `app.css`, `app.js`. The page loads its files from `/app/`, so serve the folder under that path. The app expects `/api/crank` and `/api/faucet` from [velque-keeper](https://github.com/usevelque/velque-keeper) on the same origin.
+
+Markets, mints and parameters are in [`src/config.json`](src/config.json). Everything in it is a public address.
+
+## Wallets
+
+Phantom, Solflare and Backpack. The app only asks the wallet to sign transactions it has built and shown, and it never asks for a message signature.
+
+## Related
+
+- [velque-sdk](https://github.com/usevelque/velque-sdk): the client the app is built on
+- [velque-program](https://github.com/usevelque/velque-program): the on-chain program
+
+## License
+
+MIT
