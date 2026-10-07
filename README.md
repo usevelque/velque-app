@@ -1,8 +1,19 @@
 # velque-app
 
+[![app](https://img.shields.io/badge/app-usevelque.xyz-f58aae?style=flat-square&labelColor=2a1228)](https://usevelque.xyz/app)
+[![solana](https://img.shields.io/badge/solana-devnet-f58aae?style=flat-square&labelColor=2a1228)](https://usevelque.xyz/docs)
+[![license](https://img.shields.io/badge/license-MIT-f58aae?style=flat-square&labelColor=2a1228)](LICENSE)
+
 The web app for [Velque](https://usevelque.xyz): a single page, no framework, that trades the test market in all three sessions.
 
 Live at **[usevelque.xyz/app](https://usevelque.xyz/app)**.
+
+<a href="https://usevelque.xyz/app">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/usevelque/usevelque/output/board-dark.svg">
+    <img src="https://raw.githubusercontent.com/usevelque/usevelque/output/board-light.svg" alt="The Velque test market right now, read from Solana devnet" width="100%">
+  </picture>
+</a>
 
 ## What it shows
 
